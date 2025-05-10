@@ -4,8 +4,6 @@ controllers:
         namespace: App\Controller
     type: attribute
 
-# config/routes.yaml
-
 api_login:
     path: /api/login
     methods: [POST]

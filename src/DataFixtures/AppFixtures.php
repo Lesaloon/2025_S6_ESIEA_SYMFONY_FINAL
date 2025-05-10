@@ -23,7 +23,7 @@ class AppFixtures extends Fixture
         $admin->setEmail('admin@airsoft.local');
         $admin->setRoles(['ROLE_ADMIN']);
         $admin->setIsApproved(true);
-        $admin->setIsLocked(true);
+        $admin->setIsLocked(false);
 
         $hashedPassword = $this->hasher->hashPassword($admin, 'admin123');
         $admin->setPassword($hashedPassword);

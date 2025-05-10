@@ -16,33 +16,30 @@ use Symfony\Component\Security\Http\Authentication\FormLoginAuthenticator;
 
 class SecurityController extends AbstractController
 {
-    #[Route('/register', name: 'app_register', methods: ['POST'])]
+    #[Route('/api/register', name: 'app_register', methods: ['POST'])]
     public function register(
         Request $request,
         EntityManagerInterface $em,
         UserPasswordHasherInterface $hasher
     ): JsonResponse {
-        $data = json_decode($request->getContent(), true);
-        $user = new User();
-        $user->setEmail($data['email']);
-        $user->setRoles(['ROLE_USER']);
-        $user->setIsApproved(false); // Par défaut, non validé
-        $user->setIsLocked(false);
+		try {
+			$data = json_decode($request->getContent(), true);
+			$user = new User();
+			$user->setEmail($data['email']);
+			$user->setRoles(['ROLE_USER']);
+			$user->setIsApproved(false); // Par défaut, non validé
+			$user->setIsLocked(false);
 
-        $hashedPassword = $hasher->hashPassword($user, $data['password']);
-        $user->setPassword($hashedPassword);
+			$hashedPassword = $hasher->hashPassword($user, $data['password']);
+			$user->setPassword($hashedPassword);
 
-        $em->persist($user);
-        $em->flush();
+			$em->persist($user);
+			$em->flush();
 
-        return $this->json(['message' => 'Compte créé. En attente de validation par un administrateur.'], 201);
+			return $this->json(['message' => 'Compte créé. En attente de validation par un administrateur.', 'status' => "ACCOUNT_CREATED_WAITING_ADMIN_VALIDATION"], 201);
+		} catch (\Throwable $th) {
+			return $this->json(['message' => 'Erreur lors de la création du compte.', 'error' => $th->getMessage()], 500);
+		}
     }
 
-
-    #[Route('/logout', name: 'app_logout', methods: ['GET'])]
-    public function logout(): void
-    {
-        // Symfony gère la déconnexion automatiquement via security.yaml
-        throw new \Exception('This should not be reached.');
-    }
 }

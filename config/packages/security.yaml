@@ -10,6 +10,7 @@ security:
               property: email
     firewalls:
       login:
+          user_checker: App\Security\UserChecker
           pattern: ^/api/login
           stateless: true
           json_login:
@@ -21,6 +22,7 @@ security:
       main:
         lazy: true
         stateless: true
+        user_checker: App\Security\UserChecker
         jwt: # JWT authentication
           provider: app_user_provider
 
