@@ -59,26 +59,13 @@ php bin/console doctrine:migrations:migrate
 # Démarrer le serveur
 symfony server:start
 ```
-🧪 Exemples de requêtes (via curl)
-📌 Enregistrement utilisateur
 
-```bash
-curl -X POST http://localhost:8000/api/register \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"motdepasse"}'
-```
-📌 Connexion
-```bash
-curl -X POST http://localhost:8000/api/login_check \
-  -H "Content-Type: application/json" \
-  -d '{"username":"test@example.com","password":"motdepasse"}'
-```
-📌 Ajout de matériel (après login)
-```bash
-curl -X POST http://localhost:8000/api/gears \
-  -H "Authorization: Bearer VOTRE_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"name":"M4", "type":"AEG", "brand":"G&G"}'
+## Requêtes API avec Curl
+
+il est conseillé d'utiliser les scripts fournis dans le dossier `scripts` pour tester les requêtes API.
+
+voir dans le dossier `scripts` pour les exemples de requêtes.
+
 ```
 📂 Organisation du code
 
