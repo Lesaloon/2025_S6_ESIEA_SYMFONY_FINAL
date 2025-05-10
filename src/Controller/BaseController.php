@@ -33,4 +33,18 @@ class BaseController extends AbstractController
     {
         return $this->json(['message' => 'Bienvenue sur la route ADMIN !']);
     }
+
+	#[Route('/api/me', name: 'me_route', methods: ['GET'])]
+	#[IsGranted('IS_AUTHENTICATED_FULLY')]
+	public function me(): JsonResponse
+	{
+		$user = $this->getUser();
+
+		return $this->json([
+			'email' => $user->getUserIdentifier(),
+			'roles' => $user->getRoles(),
+			'isApproved' => $user->isApproved(),
+			'isLocked' => $user->isLocked()
+		]);
+	}
 }

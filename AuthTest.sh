@@ -66,7 +66,7 @@ if [ "$create_user" == "y" ]; then
 
   USER_TOKEN=$(echo "$REGISTER_RESPONSE" | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
   if [ -z "$USER_TOKEN" ]; then
-    echo -e "\e[31mFailed to create user. Please check your credentials.\e[0m"
+    echo -e "\e[31mFailed to create user.\e[0m"
     echo -e "\e[31mResponse\e[0m $REGISTER_RESPONSE"
     STATUS=$(echo "$REGISTER_RESPONSE" | sed -n 's/.*"status":"\([^"]*\)".*/\1/p')
     echo -e "\e[31m$STATUS\e[0m"
@@ -114,7 +114,6 @@ if [ "$create_user" == "y" ]; then
     fi
   fi
   echo -e "\e[32mSuccessfully created user!\e[0m"
-  echo -e "\e[32mToken\e[0m: $USER_TOKEN"
   # echo -e "\e[32mRequesting /admin with token...\e[0m"
   # curl -X GET http://localhost:8000/admin \
   #  -H "Authorization: Bearer $USER_TOKEN"

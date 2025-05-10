@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -102,6 +104,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     // Méthode obligatoire même si vide
     public function eraseCredentials(): void
     {
-        // Si tu stockes des données sensibles, vide-les ici
+
     }
 }

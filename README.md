@@ -3,34 +3,42 @@
 ## 🎯 Objectif
 
 Cette API Symfony permet aux joueurs d'airsoft de :
-- Gérer la liste de leur matériel (répliques, équipements, etc.)
+
+- Gérer la liste de leur matériel (répliques, équipements, accessoires, etc.)
 - Enregistrer les maintenances ou réparations effectuées
-- Accéder à l'application seulement après validation manuelle par un administrateur
+- Accéder à l'application uniquement après validation manuelle par un administrateur
 
 ## 🚀 Fonctionnalités principales
 
-- Création de compte utilisateur (avec validation admin requise)
-- Authentification sécurisée
-- Rôles utilisateur / admin
-- Ajout et gestion du matériel par utilisateur
-- Ajout de fiches de maintenance liées au matériel
-- Consultation de l'historique de maintenance
-- Assignation automatique de code d'identification unique pour chaque matériel
+- Création de compte utilisateur avec validation manuelle par un administrateur
+- Authentification sécurisée via JWT
+- Gestion des rôles : utilisateur et administrateur
+- Ajout, édition et suppression du matériel personnel
+- Création de fiches de maintenance associées à un matériel
+- Consultation de l'historique des maintenances
+- Attribution automatique d'un identifiant unique pour chaque matériel
 
 ## 🧱 Entités
 
 - **User**
-  - `id`, `email`, `password`, `roles`, `isApproved`
+  - `id`, `email`, `password`, `roles`, `isApproved`, `isLocked`
 - **Gear**
   - `id`, `name`, `type`, `brand`, `user_id`
 - **Maintenance**
   - `id`, `date`, `description`, `gear_id`
 
-## 🔐 Sécurité
+## 🔐 Accès
 
-- Authentification par formulaire ou JWT (au choix)
-- Contrôle d’accès par rôle (`ROLE_USER`, `ROLE_ADMIN`)
-- Utilisateurs non approuvés ne peuvent pas se connecter
+L’accès à l’application est protégé par JWT. Un utilisateur ne peut se connecter qu’une fois son compte validé par un administrateur.
+
+## 🛠️ Lancement rapide (dev)
+
+```bash
+composer install
+php bin/console doctrine:schema:update --force
+php bin/console doctrine:fixtures:load
+symfony server:start
+
 
 ## 🛠 Installation et configuration
 
@@ -92,5 +100,5 @@ curl -X POST http://localhost:8000/api/gears \
     Symfony 7
     Doctrine ORM
     SQLite
-    JWT
+    JWT (LexikJWTAuthenticationBundle)
     Curl pour les requêtes
