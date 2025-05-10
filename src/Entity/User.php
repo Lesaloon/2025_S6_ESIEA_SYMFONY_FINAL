@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Serializer\Annotation\Ignore;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -15,21 +17,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+	#[Groups(['gear:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, unique: true)]
+	#[Groups(['gear:read'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255, nullable: false)]
+	// #[Groups([])]
     private ?string $password = null;
 
     #[ORM\Column(type: 'json')]
+	// #[Groups([])]
     private array $roles = [];
 
     #[ORM\Column]
+	// #[Groups([])]
     private ?bool $isApproved = false;
 
     #[ORM\Column]
+	// #[Groups([])]
     private ?bool $isLocked = false;
 
     public function getId(): ?int

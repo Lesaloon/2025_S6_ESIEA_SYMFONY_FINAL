@@ -5,8 +5,10 @@ USER_TOKEN=""
 
 login() {
   echo -e "\n🔐 Connexion utilisateur..."
-  read -p "Email: " email
-  read -s -p "Mot de passe: " password
+  # read -p "Email: " email
+  # read -s -p "Mot de passe: " password
+  email="user@airsoft.local"
+  password="user123"
   echo ""
 
 #   [ -z "$email" ] && $($email="user@airsoft.local")
@@ -48,19 +50,7 @@ create_gear() {
 
 edit_gear() {
   read -p "ID du matériel à modifier: " id
-
-  echo -e "\n✏️ Modification de l'équipement avec ID $id"
-  CURRENT_GEAR=$(curl -s -X GET "$BASE_URL/api/gear/$id" \
-  -H "Authorization: Bearer $USER_TOKEN")
-  CURRENT_GEAR_NAME=$(echo "$CURRENT_GEAR" | sed -n 's/.*"name":"\([^"]*\)".*/\1/p')
-  CURRENT_GEAR_TYPE=$(echo "$CURRENT_GEAR" | sed -n 's/.*"type":"\([^"]*\)".*/\1/p')
-  CURRENT_GEAR_BRAND=$(echo "$CURRENT_GEAR" | sed -n 's/.*"brand":"\([^"]*\)".*/\1/p')
-  echo "$CURRENT_GEAR"
-  echo -e "\n📦 Détails actuels :"
-  echo -e "\e[33mNom actuel: $CURRENT_GEAR_NAME\e[0m"
-  echo -e "\e[33mType actuel: $CURRENT_GEAR_TYPE\e[0m"
-  echo -e "\e[33mMarque actuelle: $CURRENT_GEAR_BRAND\e[0m"
-  echo -e "\n🔄 Entrez les nouvelles informations (laisser vide pour conserver l'ancienne valeur) :"
+  get_gear_info $id
 
   read -p "Nouveau nom: " name
   read -p "Nouveau type: " type
@@ -93,6 +83,45 @@ view_profile() {
     -H "Authorization: Bearer $USER_TOKEN"
 }
 
+create_maintenance() {
+  echo -e "\n🔧 Création d'une maintenance"
+  read -p "ID de l'équipement: " gear_id
+  get_gear_info $gear_id
+
+  read -p "Nom de la maintenance: " name
+  read -p "Date de la maintenance (YYYY-MM-DD): " date
+  read -p "Description: " description
+
+
+  CREATE_RESPONSE=$(curl -s -X POST "$BASE_URL/api/gear/$gear_id/maintenance" \
+    -H "Authorization: Bearer $USER_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{\"date\":\"$date\",\"description\":\"$description\",\"name\":\"$name\"}")
+
+  echo "$CREATE_RESPONSE"
+}
+
+# takes id as argument
+get_gear_info() {
+  id=$1
+  if [ -z "$id" ]; then
+    echo -e "\e[31m❌ ID d'équipement manquant\e[0m"
+    return
+  fi
+  echo -e "\n🔍 Informations sur l'équipement avec ID $id"
+  GEAR_INFO=$(curl -s -X GET "$BASE_URL/api/gear/$id" \
+    -H "Authorization: Bearer $USER_TOKEN")
+  echo "$GEAR_INFO"
+  GEAR_NAME=$(echo "$GEAR_INFO" | sed -n 's/.*"name":"\([^"]*\)".*/\1/p')
+  GEAR_TYPE=$(echo "$GEAR_INFO" | sed -n 's/.*"type":"\([^"]*\)".*/\1/p')
+  GEAR_BRAND=$(echo "$GEAR_INFO" | sed -n 's/.*"brand":"\([^"]*\)".*/\1/p')
+  GEAR_MAINTENANCE=$(echo "$GEAR_INFO" | sed -n 's/.*"maintenance":"\([^"]*\)".*/\1/p')
+  echo -e "\n📦 Détails de l'équipement :"
+  echo -e "\e[33mNom: $GEAR_NAME\e[0m"
+  echo -e "\e[33mType: $GEAR_TYPE\e[0m"
+  echo -e "\e[33mMarque: $GEAR_BRAND\e[0m"
+  echo -e "\e[33mMaintenance: $GEAR_MAINTENANCE\e[0m"
+}
 
 # --- Boucle principale ---
 while true; do
@@ -114,6 +143,7 @@ while true; do
     4) [ -z "$USER_TOKEN" ] && echo -e "\e[33mVeuillez vous connecter d'abord.\e[0m" || edit_gear ;;
     5) [ -z "$USER_TOKEN" ] && echo -e "\e[33mVeuillez vous connecter d'abord.\e[0m" || delete_gear ;;
 	6) [ -z "$USER_TOKEN" ] && echo -e "\e[33mVeuillez vous connecter d'abord.\e[0m" || view_profile ;;
+	7) [ -z "$USER_TOKEN" ] && echo -e "\e[33mVeuillez vous connecter d'abord.\e[0m" || create_maintenance ;;
     0) echo "👋 À bientôt !"; exit 0 ;;
     *) echo "❌ Choix invalide" ;;
   esac

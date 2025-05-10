@@ -2,7 +2,9 @@
 namespace App\Controller;
 
 use App\Entity\Gear;
+use App\Entity\Maintenance;
 use App\Repository\GearRepository;
+use App\Repository\MaintenanceRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,7 +21,7 @@ class GearController extends AbstractController
     public function list(GearRepository $repo): JsonResponse
     {
         $gears = $repo->findAllByUser($this->getUser());
-        return $this->json($gears, 200, []);
+        return $this->json($gears, 200, [], ['groups' => 'gear:read', 'gear:write']);
     }
 
     #[Route('', name: 'gear_create', methods: ['POST'])]
@@ -38,7 +40,7 @@ class GearController extends AbstractController
 
         $repo->saveGear($gear, $this->getUser());
 
-        return $this->json($gear, 201, []);
+        return $this->json($gear, 201, [], ['groups' => 'gear:read']);
     }
 
 	#[Route('/{id}', name: 'gear_show', methods: ['GET'])]
@@ -47,7 +49,7 @@ class GearController extends AbstractController
 		if ($gear->getUser() !== $this->getUser()) {
 			return $this->json(['message' => 'Unauthorized'], 403);
 		}
-		return $this->json($gear, 200, []);
+		return $this->json($gear, 200, [],['groups' => 'gear:read']);
 	}
 
 	#[Route('/{id}', name: 'gear_edit', methods: ['PUT'])]
@@ -79,4 +81,34 @@ class GearController extends AbstractController
 
         return $this->json(['message' => 'Gear deleted']);
     }
+
+	#[Route('/{id}/maintenance', name: 'gear_maintenance_list', methods: ['GET'])]
+	public function maintenanceList(Gear $gear): JsonResponse
+	{
+		if ($gear->getUser() !== $this->getUser()) {
+			return $this->json(['message' => 'Unauthorized'], 403);
+		}
+		return $this->json($gear->getMaintenances(), 200, ['groups' => 'maintenance:read']);
+	}
+
+	#[Route('/{id}/maintenance', name: 'gear_maintenance_create', methods: ['POST'])]
+	public function maintenanceCreate(
+		Request $request,
+		SerializerInterface $serializer,
+		ValidatorInterface $validator,
+		MaintenanceRepository $maintenanceRepo,
+		Gear $gear
+	): JsonResponse {
+		if ($gear->getUser() !== $this->getUser()) {
+			return $this->json(['message' => 'Unauthorized'], 403);
+		}
+		$maintenance = $serializer->deserialize($request->getContent(), Maintenance::class, 'json');
+		$errors = $validator->validate($maintenance);
+		if (count($errors) > 0) {
+			return $this->json($errors, 400);
+		}
+		$maintenance->setGear($gear);
+		$maintenanceRepo->saveMaintenance($maintenance, true);
+		return $this->json($maintenance, 201, [], ['groups' => 'maintenance:read']);
+	}
 }
