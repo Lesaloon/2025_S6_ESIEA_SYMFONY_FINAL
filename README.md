@@ -14,7 +14,8 @@ Cette API Symfony permet aux joueurs d'airsoft de :
 - Rôles utilisateur / admin
 - Ajout et gestion du matériel par utilisateur
 - Ajout de fiches de maintenance liées au matériel
-- Interface admin pour approuver les utilisateurs
+- Consultation de l'historique de maintenance
+- Assignation automatique de code d'identification unique pour chaque matériel
 
 ## 🧱 Entités
 
@@ -33,6 +34,8 @@ Cette API Symfony permet aux joueurs d'airsoft de :
 
 ## 🛠 Installation et configuration
 
+dans le php.ini il faut activer l'extension openssl et pdo_sqlite
+
 ```bash
 # Cloner le projet
 git clone https://github.com/ton-projet/airsoft-api.git
@@ -41,12 +44,8 @@ cd airsoft-api
 # Installer les dépendances
 composer install
 
-# Copier le fichier .env
-cp .env .env.local
-# Configurer ta base de données dans .env.local
-
 # Créer la base et les tables
-php bin/console doctrine:database:create
+# php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
 
 # Démarrer le serveur
@@ -85,14 +84,13 @@ curl -X POST http://localhost:8000/api/gears \
 
 📌 À faire
 
-- [ ] Génération de token JWT ou formulaire de login
-- [ ] Vérification isApproved dans le login
+- [X] Génération de token JWT ou formulaire de login
+- [X] Vérification isApproved dans le login
 - [ ] CRUD complet pour Gear et Maintenance
-- [ ] Dashboard admin simple pour validation des comptes
 
 📚 Technologies
     Symfony 7
     Doctrine ORM
-    MySQL ou PostgreSQL
-    JWT (ou session)
-    Postman/curl pour tester
+    SQLite
+    JWT
+    Curl pour les requêtes
