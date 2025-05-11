@@ -132,6 +132,7 @@ while true; do
   echo "[4] Modifier un équipement"
   echo "[5] Supprimer un équipement"
   echo "[6] Voir mes informations"
+  echo "[7] Créer une maintenance"
   echo "[0] Quitter"
 
   read -p "Choix: " choice
