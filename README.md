@@ -52,6 +52,12 @@ cd airsoft-api
 # Installer les dépendances
 composer install
 
+# Crée les clés JWT
+mkdir -p config/jwt
+openssl genrsa -out config/jwt/private.pem 4096
+openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
+
+
 # Créer la base et les tables
 # php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
