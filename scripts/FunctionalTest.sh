@@ -123,6 +123,17 @@ get_gear_info() {
   echo -e "\e[33mMaintenance: $GEAR_MAINTENANCE\e[0m"
 }
 
+check_maintenance() {
+  echo -e "\n⏱️ Vérification des équipements nécessitant une maintenance"
+  read -p "Nombre de jours depuis la dernière maintenance : " days
+
+  RESPONSE=$(curl -s -X GET "$BASE_URL/api/gear/needs-maintenance/$days" \
+    -H "Authorization: Bearer $USER_TOKEN")
+
+  echo "$RESPONSE"
+}
+
+
 # --- Boucle principale ---
 while true; do
   echo -e "\n🎛️  Menu - Gestion du matériel"
@@ -133,6 +144,7 @@ while true; do
   echo "[5] Supprimer un équipement"
   echo "[6] Voir mes informations"
   echo "[7] Créer une maintenance"
+  echo "[8] Vérifier les maintenances à faire"
   echo "[0] Quitter"
 
   read -p "Choix: " choice
@@ -145,6 +157,7 @@ while true; do
     5) [ -z "$USER_TOKEN" ] && echo -e "\e[33mVeuillez vous connecter d'abord.\e[0m" || delete_gear ;;
 	6) [ -z "$USER_TOKEN" ] && echo -e "\e[33mVeuillez vous connecter d'abord.\e[0m" || view_profile ;;
 	7) [ -z "$USER_TOKEN" ] && echo -e "\e[33mVeuillez vous connecter d'abord.\e[0m" || create_maintenance ;;
+	8) [ -z "$USER_TOKEN" ] && echo -e "\e[33mVeuillez vous connecter d'abord.\e[0m" || check_maintenance ;;
     0) echo "👋 À bientôt !"; exit 0 ;;
     *) echo "❌ Choix invalide" ;;
   esac
